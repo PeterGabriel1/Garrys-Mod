@@ -1,0 +1,37 @@
+hook.Add( "PlayerSay", "build_pvp", function( sender, text )
+    if text == "!build" then
+        sender.BuildMode = true
+        sender:GodEnable()
+        sender:ChatPrint( "Build mode enabled!" )
+        return ""
+    elseif text == "!pvp" then
+        sender.BuildMode = false
+        sender:GodDisable()
+        sender:ChatPrint( "Build mode disabled!" )
+        return ""
+    end
+end )
+
+hook.Add( "EntityTakeDamage", "build_pvp", function( target, dmg )
+    local attacker = dmg:GetAttacker()
+    if IsValid( target ) and target:IsPlayer() and IsValid( attacker ) and attacker:IsPlayer() and attacker.BuildMode then
+        dmg:SetDamage( 0 ) 
+        return true
+    end
+end )
+
+
+hook.Add( "PlayerShouldTakeDamage", "build_pvp", function( ply, attacker )
+    if IsValid( attacker ) and attacker:IsPlayer() and attacker.BuildMode then
+        return false
+    end
+end )
+
+
+hook.Add( "ScalePlayerDamage", "build_pvp", function( ply, hitgroup, dmginfo )
+    local attacker = dmginfo:GetAttacker()
+    if IsValid( attacker ) and attacker:IsPlayer() and attacker.BuildMode then
+        dmginfo:SetDamage( 0 ) 
+        return true
+    end
+end )
